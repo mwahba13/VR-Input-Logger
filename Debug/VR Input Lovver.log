@@ -1,0 +1,8 @@
+﻿  VRSystem.cpp
+VRSystem.obj : error LNK2019: unresolved external symbol __imp__VR_GetGenericInterface referenced in function "public: class vr::IVRSystem * __thiscall vr::COpenVRContext::VRSystem(void)" (?VRSystem@COpenVRContext@vr@@QAEPAVIVRSystem@2@XZ)
+VRSystem.obj : error LNK2019: unresolved external symbol __imp__VR_IsInterfaceVersionValid referenced in function "class vr::IVRSystem * __cdecl vr::VR_Init(enum vr::EVRInitError *,enum vr::EVRApplicationType,char const *)" (?VR_Init@vr@@YAPAVIVRSystem@1@PAW4EVRInitError@1@W4EVRApplicationType@1@PBD@Z)
+VRSystem.obj : error LNK2019: unresolved external symbol __imp__VR_GetInitToken referenced in function "public: void __thiscall vr::COpenVRContext::CheckClear(void)" (?CheckClear@COpenVRContext@vr@@QAEXXZ)
+VRSystem.obj : error LNK2019: unresolved external symbol __imp__VR_InitInternal2 referenced in function "class vr::IVRSystem * __cdecl vr::VR_Init(enum vr::EVRInitError *,enum vr::EVRApplicationType,char const *)" (?VR_Init@vr@@YAPAVIVRSystem@1@PAW4EVRInitError@1@W4EVRApplicationType@1@PBD@Z)
+VRSystem.obj : error LNK2019: unresolved external symbol __imp__VR_ShutdownInternal referenced in function "class vr::IVRSystem * __cdecl vr::VR_Init(enum vr::EVRInitError *,enum vr::EVRApplicationType,char const *)" (?VR_Init@vr@@YAPAVIVRSystem@1@PAW4EVRInitError@1@W4EVRApplicationType@1@PBD@Z)
+libs\openvr_api.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
+C:\Users\mike_\Documents\VR Input Lovver\Debug\VR Input Logger.exe : fatal error LNK1120: 5 unresolved externals
