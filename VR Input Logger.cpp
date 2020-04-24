@@ -3,10 +3,11 @@
 
 #include <iostream>
 #include "VRSystem.h"
+#include "CSVLogger.h"
 
 //NOTE: Comment out appropriate line if you plan on standing or sitting
-ETrackingUniverseOrigin ABS_TRACKING_POSE = TrackingUniverseSeated;
-//ETrackingUniverseOrigin ABS_TRACKING_POSE = TrackingUniverseStanding;
+//ETrackingUniverseOrigin ABS_TRACKING_POSE = TrackingUniverseSeated;
+ETrackingUniverseOrigin ABS_TRACKING_POSE = TrackingUniverseStanding;
 
 
 
@@ -16,22 +17,20 @@ int main()
 	VRHandler handler;
 	handler.initializeVRSystem();
 
+	CSVLogger logger;
+
+
 
 	while (true) {
 
-		if (handler.ivrSystem != NULL) {
 
-			
+		//get right controller
+		handler.ivrSystem->GetControllerStateWithPose(ABS_TRACKING_POSE, 2, handler.r_deviceState, sizeof(handler.r_deviceState), handler.r_devicePose);
 
-			handler.ivrSystem->GetDeviceToAbsoluteTrackingPose(TrackingUniverseSeated, 0,handler.devicePose , k_unMaxTrackedDeviceCount);
+		//get left controller
+		handler.ivrSystem->GetControllerStateWithPose(ABS_TRACKING_POSE, 1, handler.l_deviceState, sizeof(handler.l_deviceState), handler.l_devicePose);
 
-			for (int i = 0; i < k_unMaxTrackedDeviceCount; i++) {
 
-				if ((handler.devicePose[i]))
-
-			}
-
-		}
 
 
 	}

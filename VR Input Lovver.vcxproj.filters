@@ -30,6 +30,9 @@
     <ClCompile Include="hmderrors_public.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CSVLogger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\openvr_capi.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\hmderrors_public.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSVLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

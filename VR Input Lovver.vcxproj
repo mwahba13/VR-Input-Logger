@@ -154,11 +154,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CSVLogger.cpp" />
     <ClCompile Include="hmderrors_public.cpp" />
     <ClCompile Include="VR Input Logger.cpp" />
     <ClCompile Include="VRSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CSVLogger.h" />
     <ClInclude Include="includes\hmderrors_public.h" />
     <ClInclude Include="includes\openvr.h" />
     <ClInclude Include="includes\openvr_capi.h" />

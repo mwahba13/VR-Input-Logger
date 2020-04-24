@@ -16,16 +16,18 @@ using namespace vr;
 		void cleanUpVRSystem();
 
 		IVRSystem* ivrSystem;
-		TrackedDevicePose_t* devicePose;
 
+		TrackedDevicePose_t* l_devicePose;
+		VRControllerState001_t* l_deviceState;
+
+		TrackedDevicePose_t* r_devicePose;
+		VRControllerState001_t* r_deviceState;
 
 	private:
 		
 		void isVRsuitable();
 
-		
-		ETrackedDeviceClass* deviceClass;
-		ETrackedDeviceProperty* deviceName;
+
 
 
 
