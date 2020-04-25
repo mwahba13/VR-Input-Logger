@@ -23,7 +23,6 @@ CSVLogger::CSVLogger() {
 void
 CSVLogger::closeFile() {
 
-
 	outputFile.close();
 }
 
@@ -31,7 +30,7 @@ void
 CSVLogger::logInput(VRHandler* handler) {
 
 
-	handler->l_devicePose->
+	
 	
 		
 

@@ -5,25 +5,17 @@ using namespace vr;
 
 void VRHandler::initializeVRSystem() {
 
-	isVRsuitable();
-
+	//VRsuitable();
 
 
 	HmdError errorCode;
 	ivrSystem = VR_Init(&errorCode, EVRApplicationType::VRApplication_Utility);
 
-	if (errorCode != HmdError::VRInitError_None) {
-		std::cout << GetEnglishStringForHmdError(errorCode) << std::endl;
-		cleanUpVRSystem();
-	}
 
-	for (int i = k_unTrackedDeviceIndex_Hmd; i < k_unMaxTrackedDeviceCount; i++) {
 
-		if (ivrSystem->IsTrackedDeviceConnected(i)) {
-			*deviceClass = ivrSystem->GetTrackedDeviceClass(i);
-		}
 
-	}
+
+	std::cout << "VR System Successfully initialized";
 
 }
 

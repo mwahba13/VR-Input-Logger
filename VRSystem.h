@@ -15,21 +15,21 @@ using namespace vr;
 		void initializeVRSystem();
 		void cleanUpVRSystem();
 
-		IVRSystem* ivrSystem;
+		IVRSystem* ivrSystem = NULL;
 
-		TrackedDevicePose_t* l_devicePose;
-		VRControllerState001_t* l_deviceState;
+		TrackedDevicePose_t* devicePose = NULL;
 
-		TrackedDevicePose_t* r_devicePose;
-		VRControllerState001_t* r_deviceState;
+		VRControllerState001_t* l_controlState = nullptr;
+		VRControllerState001_t* r_controlState = nullptr;
 
+		
 	private:
 		
 		void isVRsuitable();
 
 
 
-
+		
 
 	};
 
