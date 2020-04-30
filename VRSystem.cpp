@@ -20,6 +20,8 @@ void VRHandler::initializeVRSystem() {
 }
 
 
+
+
 void VRHandler::isVRsuitable() {
 
 	if (!VR_IsHmdPresent()) {

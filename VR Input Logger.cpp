@@ -2,28 +2,44 @@
 //
 
 #include <iostream>
+#include <csignal>
+#include <Windows.h>
 #include "VRSystem.h"
 #include "CSVLogger.h"
 
-//NOTE: Comment out appropriate line if you plan on standing or sitting
-//ETrackingUniverseOrigin ABS_TRACKING_POSE = TrackingUniverseSeated;
+
 ETrackingUniverseOrigin ABS_TRACKING_POSE = TrackingUniverseStanding;
+std::string FILE_NAME = "VR_Input_Logger.csv";
+
+
 
 
 
 int main()
 {
 
+	bool inputFlag = false;
 
+
+	
+	std::string begin;
+	std::cout << "Once your headset is on and you are ready to start logging, Type B into the console to begin."<<std::endl;
+	std::cin >> begin;
+	if (begin == "b" || begin == "B")
+		inputFlag = !inputFlag;
+		
 	VRHandler handler;
 	handler.initializeVRSystem();
-	//CSVLogger logger();
 
+	CSVLogger logger(FILE_NAME);
+	logger.openFile();
 
+	std::cout << "\nLogging...When done, please turn off the HMD or let it go to sleep"<<std::endl;
 
-	while (true) {
+	logger.setStartTimer();
+	while (inputFlag) {
 
-
+		logger.setTimepoint();
 		for (unsigned int deviceId = 0; deviceId < k_unMaxTrackedDeviceCount; deviceId++) {
 			TrackedDevicePose_t trackedDevicePose;
 			VRControllerState001_t controllerState;
@@ -37,33 +53,45 @@ int main()
 			if (deviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD) {
 				//get head tracker stuff
 				handler.ivrSystem->GetDeviceToAbsoluteTrackingPose(ABS_TRACKING_POSE, 0, &trackedDevicePose, 1);
-
-				
+				logger.setHMD(trackedDevicePose);
 
 			}
 
 			if (deviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller) {
+
 				handler.ivrSystem->GetControllerStateWithPose(ABS_TRACKING_POSE, deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 				
-
 				if (handler.ivrSystem->GetControllerRoleForTrackedDeviceIndex(deviceId) == ETrackedControllerRole::TrackedControllerRole_LeftHand) {
 					//get left hand stuff
-					std::cout << controllerState.ulButtonPressed << std::endl;
+					logger.setController(controllerState, trackedDevicePose,handler.ivrSystem,deviceId, false);
 				}
 
 				else if (handler.ivrSystem->GetControllerRoleForTrackedDeviceIndex(deviceId) == ETrackedControllerRole::TrackedControllerRole_RightHand) {
 					//get right hand stuff
-
+					logger.setController( controllerState, trackedDevicePose,handler.ivrSystem,deviceId, true);
 				}
 			}
 
 
 
 		}
+
+		logger.writeToFile();
+
+		
+		VREvent_t event;
+		handler.ivrSystem->PollNextEvent(&event, sizeof(event));
+		if (event.eventType == VREvent_EnterStandbyMode) {
+			std::cout << "Standby mode entered" << std::endl;
+			inputFlag = !inputFlag;
+		}
+		
 		
 
 	}
 
-	
+	handler.cleanUpVRSystem();
+	logger.closeFile();
+	std::cout << "Logging complete" << std::endl;
 }
 
