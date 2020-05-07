@@ -18,14 +18,17 @@ CSVLogger::CSVLogger(std::string path) {
 
 void CSVLogger::setStartTimer() {
 	start = timer.now();
+	
 }
 
 void CSVLogger::setTimepoint() {
 	nextTime = timer.now();
-
+	
 	timeStamp = duration_cast<duration<double>>(nextTime - start);
 
 }
+
+
 
 void CSVLogger::openFile() {
 

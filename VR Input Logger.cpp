@@ -12,16 +12,17 @@ ETrackingUniverseOrigin ABS_TRACKING_POSE = TrackingUniverseStanding;
 std::string FILE_NAME = "VR_Input_Logger.csv";
 
 
-
+using namespace std;
 
 
 int main()
 {
 
 	bool inputFlag = false;
-
+	bool enoughTimePassed = true;
 
 	
+
 	std::string begin;
 	std::cout << "Once your headset is on and you are ready to start logging, Type B into the console to begin."<<std::endl;
 	std::cin >> begin;
@@ -39,56 +40,77 @@ int main()
 	logger.setStartTimer();
 	while (inputFlag) {
 
-		logger.setTimepoint();
-		for (unsigned int deviceId = 0; deviceId < k_unMaxTrackedDeviceCount; deviceId++) {
-			TrackedDevicePose_t trackedDevicePose;
-			VRControllerState001_t controllerState;
 
-			ETrackedDeviceClass deviceClass = handler.ivrSystem->GetTrackedDeviceClass(deviceId);
 
-			if (!handler.ivrSystem->IsTrackedDeviceConnected(deviceId)) {
-				continue;
-			}
+		if (enoughTimePassed) {
 
-			if (deviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD) {
-				//get head tracker stuff
-				handler.ivrSystem->GetDeviceToAbsoluteTrackingPose(ABS_TRACKING_POSE, 0, &trackedDevicePose, 1);
-				logger.setHMD(trackedDevicePose);
 
-			}
+			logger.then = logger.timer.now();
 
-			if (deviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller) {
+			logger.setTimepoint();
+			for (unsigned int deviceId = 0; deviceId < k_unMaxTrackedDeviceCount; deviceId++) {
+				TrackedDevicePose_t trackedDevicePose;
+				VRControllerState001_t controllerState;
 
-				handler.ivrSystem->GetControllerStateWithPose(ABS_TRACKING_POSE, deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
-				
-				if (handler.ivrSystem->GetControllerRoleForTrackedDeviceIndex(deviceId) == ETrackedControllerRole::TrackedControllerRole_LeftHand) {
-					//get left hand stuff
-					logger.setController(controllerState, trackedDevicePose,handler.ivrSystem,deviceId, false);
+				ETrackedDeviceClass deviceClass = handler.ivrSystem->GetTrackedDeviceClass(deviceId);
+
+				if (!handler.ivrSystem->IsTrackedDeviceConnected(deviceId)) {
+					continue;
 				}
 
-				else if (handler.ivrSystem->GetControllerRoleForTrackedDeviceIndex(deviceId) == ETrackedControllerRole::TrackedControllerRole_RightHand) {
-					//get right hand stuff
-					logger.setController( controllerState, trackedDevicePose,handler.ivrSystem,deviceId, true);
+				if (deviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD) {
+					//get head tracker stuff
+					handler.ivrSystem->GetDeviceToAbsoluteTrackingPose(ABS_TRACKING_POSE, 0, &trackedDevicePose, 1);
+					logger.setHMD(trackedDevicePose);
+
 				}
+
+				if (deviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller) {
+
+					handler.ivrSystem->GetControllerStateWithPose(ABS_TRACKING_POSE, deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
+
+					if (handler.ivrSystem->GetControllerRoleForTrackedDeviceIndex(deviceId) == ETrackedControllerRole::TrackedControllerRole_LeftHand) {
+						//get left hand stuff
+						logger.setController(controllerState, trackedDevicePose, handler.ivrSystem, deviceId, false);
+					}
+
+					else if (handler.ivrSystem->GetControllerRoleForTrackedDeviceIndex(deviceId) == ETrackedControllerRole::TrackedControllerRole_RightHand) {
+						//get right hand stuff
+						logger.setController(controllerState, trackedDevicePose, handler.ivrSystem, deviceId, true);
+					}
+				}
+
+
+
 			}
 
+			logger.writeToFile();
 
+
+			VREvent_t event;
+			handler.ivrSystem->PollNextEvent(&event, sizeof(event));
+			if (event.eventType == VREvent_EnterStandbyMode) {
+				std::cout << "Standby mode entered" << std::endl;
+				inputFlag = !inputFlag;
+			}
+
+			enoughTimePassed = !enoughTimePassed;
 
 		}
 
-		logger.writeToFile();
+		logger.timeElapsed = std::chrono::duration_cast<std::chrono::duration<double>>(logger.timer.now() - logger.then);
+		if (logger.timeElapsed.count() > 1.0) {
+			enoughTimePassed = !enoughTimePassed;
+		}
 
 		
-		VREvent_t event;
-		handler.ivrSystem->PollNextEvent(&event, sizeof(event));
-		if (event.eventType == VREvent_EnterStandbyMode) {
-			std::cout << "Standby mode entered" << std::endl;
-			inputFlag = !inputFlag;
-		}
-		
-		
+
 
 	}
+
+
+
+		
 
 	handler.cleanUpVRSystem();
 	logger.closeFile();
