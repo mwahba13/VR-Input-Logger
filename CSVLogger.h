@@ -21,12 +21,8 @@ struct controller {
 
 
 	float trigger1 = 0.;
-	float trigger2 = 0.;
-	int trigAxisNum = 0;
-	bool button1 = 0;
-	bool button2 = 0;
-	bool button3 = 0;
-	bool button4 = 0;
+	float x_trackpad = 0.;
+	float y_trackpad = 0.;
 
 	HmdVector3_t position;
 
@@ -44,10 +40,12 @@ private:
 	std::string filename;
 
 	std::chrono::time_point<std::chrono::steady_clock> start;
-	
 	std::chrono::time_point<std::chrono::steady_clock> nextTime;
+
+
+
 	std::chrono::duration<double> timeStamp;
-	std::chrono::steady_clock timer;
+
 	
 
 	controller leftController;
@@ -61,12 +59,18 @@ private:
 	std::string convertVec3ToString(HmdVector3_t);
 
 public:
+
+	std::chrono::steady_clock timer;
+	std::chrono::time_point<std::chrono::steady_clock> now;
+	std::chrono::time_point<std::chrono::steady_clock> then;
+	std::chrono::duration<double> timeElapsed;
 	
 	void setController(VRControllerState001_t,  TrackedDevicePose_t , IVRSystem*,unsigned int, bool );
 	void setHMD(TrackedDevicePose_t);
 	void setTimepoint();
 	void setStartTimer();
 	void logTime();
+	bool ifEnoughTimePassed();
 
 	void openFile();
 	void writeToFile();

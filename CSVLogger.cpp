@@ -18,21 +18,24 @@ CSVLogger::CSVLogger(std::string path) {
 
 void CSVLogger::setStartTimer() {
 	start = timer.now();
+	
 }
 
 void CSVLogger::setTimepoint() {
 	nextTime = timer.now();
-
+	
 	timeStamp = duration_cast<duration<double>>(nextTime - start);
 
 }
+
+
 
 void CSVLogger::openFile() {
 
 	outputFile.open(filename, std::fstream::out);
 
 
-	outputFile <<"Time," <<"Head Position," << "Right Controller Position," <<"Right Trigger1,"<<"Right Trigger2," << "Left Controller Position," << "Left Trigger1,"<<"Left Trigger2," <<std::endl;
+	outputFile <<"Time," <<"Head Position," << "Right Controller Position," <<"Right Trigger,"<<"Right Trackpad," << "Left Controller Position," << "Left Trigger,"<<"Left Trackpad,"<<std::endl;
 }
 
 void CSVLogger::writeToFile() {
@@ -65,29 +68,15 @@ void CSVLogger::setController( VRControllerState001_t state, TrackedDevicePose_t
 	controller tempControl;
 
 
-	//get analog trigger data
-	VRControllerAxis_t axis1 = state.rAxis[1];
-	tempControl.trigger1 = axis1.x;
+	//get analog trigger and trackpad data
+	VRControllerAxis_t axis_trig = state.rAxis[1];
+	tempControl.trigger1 = axis_trig.x;
 
-	axis1 = state.rAxis[2];
-	tempControl.trigger2 = axis1.x;
+	VRControllerAxis_t axis_pad = state.rAxis[k_eControllerAxis_TrackPad];
+	tempControl.x_trackpad = axis_pad.x;
+	tempControl.y_trackpad = axis_pad.y;
+	
 
-	//gets button states
-	if (state.ulButtonPressed & ButtonMaskFromId(EVRButtonId::k_EButton_Axis0)) {
-		tempControl.button1 = 1;
-	}
-	if (state.ulButtonPressed & ButtonMaskFromId(EVRButtonId::k_EButton_Axis1)) {
-		tempControl.button2 = 1;
-	}
-	if (state.ulButtonPressed & ButtonMaskFromId(EVRButtonId::k_EButton_Axis2)) {
-		tempControl.button2 = 3;
-	}
-	if (state.ulButtonPressed & ButtonMaskFromId(EVRButtonId::k_EButton_Axis0)) {
-		tempControl.button3 = 1;
-	}
-	if (state.ulButtonPressed & ButtonMaskFromId(EVRButtonId::k_EButton_Axis0)) {
-		tempControl.button4 = 1;
-	}
 	
 	//get position and rotational data
 	tempControl.position = convertMatrixToVec3(pose.mDeviceToAbsoluteTracking);
@@ -97,6 +86,10 @@ void CSVLogger::setController( VRControllerState001_t state, TrackedDevicePose_t
 	else
 		leftController = tempControl;
 
+std::string CSVLogger::convertVec3ToString(HmdVector3_t vec) {
+
+	return( "(" + std::to_string(vec.v[0]) + ";" + std::to_string(vec.v[1]) + ";" + std::to_string(vec.v[2]) + ")");
+
 }
 
 std::string CSVLogger::convertVec3ToString(HmdVector3_t vec) {
@@ -105,10 +98,11 @@ std::string CSVLogger::convertVec3ToString(HmdVector3_t vec) {
 
 }
 
+
 std::string CSVLogger::convertControllerToString(controller control) {
 
 	std::string out;
-	return out = convertVec3ToString(control.position) + "," + std::to_string(control.trigger1) + ","+std::to_string(control.trigger2);
+	return out = convertVec3ToString(control.position) + "," + std::to_string(control.trigger1) + "," +"(" + std::to_string(control.x_trackpad)+ ";" + std::to_string(control.y_trackpad) + ")";
 }
 
 HmdVector3_t CSVLogger::convertMatrixToVec3(HmdMatrix34_t mat) {
