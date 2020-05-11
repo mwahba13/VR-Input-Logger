@@ -63,7 +63,7 @@ void CSVLogger::setHMD(TrackedDevicePose_t pose) {
 
 }
 
-void CSVLogger::setController( VRControllerState001_t state, TrackedDevicePose_t pose,IVRSystem* system,unsigned int deviceID,  bool isRight) {
+void CSVLogger::setController(VRControllerState001_t state, TrackedDevicePose_t pose, IVRSystem* system, unsigned int deviceID, bool isRight) {
 
 	controller tempControl;
 
@@ -75,9 +75,9 @@ void CSVLogger::setController( VRControllerState001_t state, TrackedDevicePose_t
 	VRControllerAxis_t axis_pad = state.rAxis[k_eControllerAxis_TrackPad];
 	tempControl.x_trackpad = axis_pad.x;
 	tempControl.y_trackpad = axis_pad.y;
-	
 
-	
+
+
 	//get position and rotational data
 	tempControl.position = convertMatrixToVec3(pose.mDeviceToAbsoluteTracking);
 
@@ -86,11 +86,8 @@ void CSVLogger::setController( VRControllerState001_t state, TrackedDevicePose_t
 	else
 		leftController = tempControl;
 
-std::string CSVLogger::convertVec3ToString(HmdVector3_t vec) {
-
-	return( "(" + std::to_string(vec.v[0]) + ";" + std::to_string(vec.v[1]) + ";" + std::to_string(vec.v[2]) + ")");
-
 }
+
 
 std::string CSVLogger::convertVec3ToString(HmdVector3_t vec) {
 

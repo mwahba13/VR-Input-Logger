@@ -41,8 +41,6 @@ int main()
 	while (inputFlag) {
 
 
-			ETrackedDeviceClass deviceClass = handler.ivrSystem->GetTrackedDeviceClass(deviceId);
-
 		if (enoughTimePassed) {
 
 
@@ -52,7 +50,6 @@ int main()
 			for (unsigned int deviceId = 0; deviceId < k_unMaxTrackedDeviceCount; deviceId++) {
 				TrackedDevicePose_t trackedDevicePose;
 				VRControllerState001_t controllerState;
-
 				ETrackedDeviceClass deviceClass = handler.ivrSystem->GetTrackedDeviceClass(deviceId);
 
 				if (!handler.ivrSystem->IsTrackedDeviceConnected(deviceId)) {
@@ -88,23 +85,25 @@ int main()
 			logger.writeToFile();
 
 
-			VREvent_t event;
-			handler.ivrSystem->PollNextEvent(&event, sizeof(event));
-			if (event.eventType == VREvent_EnterStandbyMode) {
-				std::cout << "Standby mode entered" << std::endl;
-				inputFlag = !inputFlag;
-			}
 
 			enoughTimePassed = !enoughTimePassed;
 
 		}
 
-		logger.timeElapsed = std::chrono::duration_cast<std::chrono::duration<double>>(logger.timer.now() - logger.then);
-		if (logger.timeElapsed.count() > 1.0) {
-			enoughTimePassed = !enoughTimePassed;
+
+		VREvent_t event;
+		handler.ivrSystem->PollNextEvent(&event, sizeof(event));
+		if (event.eventType == VREvent_EnterStandbyMode || event.eventType == VREvent_TrackedDeviceUserInteractionEnded) {
+			std::cout << "Standby mode entered" << std::endl;
+			inputFlag = !inputFlag;
 		}
 
 		
+
+		logger.timeElapsed = std::chrono::duration_cast<std::chrono::duration<double>>(logger.timer.now() - logger.then);
+		if (logger.timeElapsed.count() >= 1.0) {
+			enoughTimePassed = !enoughTimePassed;
+		}
 
 
 	}
